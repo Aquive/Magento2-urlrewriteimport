@@ -10,7 +10,6 @@
 namespace Jworks\UrlRewriteImport\Model\UrlRewrite;
 
 use Magento\Framework\App\ResourceConnection;
-use Magento\Setup\Exception;
 
 /**
  * URL rewrite CSV Import Handler
@@ -54,7 +53,13 @@ class CsvImportHandler
      */
     protected $_urlModel;
 
+    /**
+     * @var array
+     */
     protected $errors = [];
+    /**
+     * @var array
+     */
     protected $success = [];
 
     /**
@@ -106,10 +111,8 @@ class CsvImportHandler
     }
 
     /**
-     * Import Tax Rates from CSV file
-     *
-     * @param array $file file info retrieved from $_FILES array
-     * @return void
+     * @param $file
+     * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function importFromCsvFile($file)
@@ -137,7 +140,7 @@ class CsvImportHandler
                 $urlData = $this->parse($dataRow);
                 $this->_importUrl($urlData);
                 $this->success['Line: ' . $lineNumber] = 'Successfully imported';
-            } catch (\Throwable $exception) {
+            } catch (\Exception $exception) {
                 $this->errors['Line: ' . $lineNumber] = $exception->getMessage();
                 continue;
             }
@@ -180,14 +183,12 @@ class CsvImportHandler
     /**
      * @param array $rewrite
      * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function parse(array $rewrite)
     {
         array_walk($rewrite, 'trim');
         $parsedRewrite = [];
-
-        //print_r($this->_publicStores);
-        //die();
 
         if(!isset($rewrite['request_path'])) {
             throw new \Magento\Framework\Exception\LocalizedException(
@@ -207,16 +208,15 @@ class CsvImportHandler
             );
         }
 
-        // TODO: fix this
-        /*if(!in_array($rewrite['store_code'], $this->_publicStores)) {
+        if(!array_key_exists($rewrite['store_code'], $this->_publicStores)) {
             $validStores = null;
             foreach ($this->_publicStores as $storeName => $value) {
                 $validStores .=  '"' . $storeName . '", ';
             }
             throw new \Magento\Framework\Exception\LocalizedException(
-                __('Store code not found. Valid entries are: ' . substr($validStores, 0, -2))
+                __('Store code "' . $rewrite['store_code'] . '" not found. Valid entries are: ' . substr($validStores, 0, -2))
             );
-        }*/
+        }
 
         $parsedRewrite['request_path'] = $rewrite['request_path'];
         $parsedRewrite['target_path'] = $rewrite['target_path'];

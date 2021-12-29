@@ -1,0 +1,7 @@
+request_path,target_path,redirect,store_code
+req1,target1,0,nl
+req2,target2,0,nl
+req3,target3,301,nl
+req4,target4,301,nl
+req5,target5,302,nl
+req6,target6,302,nl

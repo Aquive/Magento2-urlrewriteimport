@@ -24,6 +24,5 @@ class Import extends \Magento\Backend\Block\Widget
     public function __construct(\Magento\Backend\Block\Template\Context $context, array $data = [])
     {
         parent::__construct($context, $data);
-        $this->setUseContainer(true);
     }
 }

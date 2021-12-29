@@ -8,7 +8,8 @@
  * @copyright Copyright (c) 2017 Jworks Digital ()
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Jworks_UrlRewriteImport::url_import" title="URL Rewrites Import" translate="title"
              module="Jworks_UrlRewriteImport" sortOrder="21" parent="Magento_Backend::marketing_seo"

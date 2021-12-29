@@ -1,4 +1,6 @@
-## Jworks_UrlRewriteImport
+## Magento2-urlrewriteimport
+
+Forked from [Jworks_UrlRewriteImport](https://github.com/Jitheesh/Magento2-urlrewriteimport) and made some (arbitrary) changes and improvements.
 - Used to import custom url redirects
 - CSV format should be like this example
 

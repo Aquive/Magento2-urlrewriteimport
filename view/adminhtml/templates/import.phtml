@@ -21,10 +21,6 @@
                     <?php echo $block->getButtonHtml(__('Import URL rewrites'), '', 'import-submit') ?>
                 </div>
             </div>
-
-
-
-
         </form>
         <script>
             require(['jquery', "mage/mage", "loadingPopup"], function(jQuery){
@@ -43,16 +39,21 @@
             });
         </script>
     </div>
-
     <div>
         <div>
-            <h2>Example CSV</h2>
+            <h2><?= __('Usefull information') ?></h2>
             <p>
-                Attention: the CSV should be comma separated.
+                <?= __('The CSV should be comma separated.') ?>
+            </p>
+            <p>
+                <?= __('The columns are matched by their header name.') ?>
+            </p>
+            <p>
+                <?= __('Download example file: ') ?>
+                <a href="<?php echo $this->getViewFileUrl('Jworks_UrlRewriteImport::example.csv'); ?>">example.csv</a>
             </p>
 
             <img src="<?php echo $this->getViewFileUrl('Jworks_UrlRewriteImport::images/example-csv.png'); ?>" />
         </div>
     </div>
-
 </div>

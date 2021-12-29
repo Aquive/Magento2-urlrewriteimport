@@ -30,8 +30,11 @@ class ImportPost extends \Jworks\UrlRewriteImport\Controller\Adminhtml\Import
                 $importHandler = $this->_objectManager->create('Jworks\UrlRewriteImport\Model\UrlRewrite\CsvImportHandler');
                 $result = $importHandler->importFromCsvFile($this->getRequest()->getFiles('import_rewrites_file'));
 
-                $this->messageManager->addSuccess(__('The url rewrites has been run. Results are below'));
-                $this->messageManager->addSuccess('<pre>' . print_r($result, true) . '</pre>');
+                $resultLog = substr(print_r($result, true), 7);
+                $resultLog = substr($resultLog, 0, -2);
+
+                $this->messageManager->addSuccess(__('The url rewrites import has been run. Results are below'));
+                $this->messageManager->addSuccess('<pre>' . $resultLog . '</pre>');
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
             } catch (\Exception $e) {

@@ -27,9 +27,7 @@ class Index extends \Jworks\UrlRewriteImport\Controller\Adminhtml\Import
         $resultPage = $this->resultFactory->create(ResultFactory::TYPE_PAGE);
 
         $resultPage->setActiveMenu('Jworks_UrlRewriteImport::url_import');
-        $resultPage->addContent(
-            $resultPage->getLayout()->createBlock('Jworks\UrlRewriteImport\Block\Adminhtml\Import\ImportHeader')
-        );
+
         $resultPage->addContent(
             $resultPage->getLayout()->createBlock('Jworks\UrlRewriteImport\Block\Adminhtml\Import\Import')
         );

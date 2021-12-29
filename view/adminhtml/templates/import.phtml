@@ -28,23 +28,23 @@
         </form>
         <?php endif; ?>
         <script>
-require(['jquery', "mage/mage", "loadingPopup"], function(jQuery){
+        require(['jquery', "mage/mage", "loadingPopup"], function(jQuery){
 
-    jQuery('#import-form').mage('form').mage('validation');
-    (function ($) {
-        $('.import-submit').click(function(){
-            if($(':input[name="import_rewrites_file"]').val()) {
-                $('body').loadingPopup({
-                    timeout: false
+            jQuery('#import-form').mage('form').mage('validation');
+            (function ($) {
+                $('.import-submit').click(function(){
+                    if($(':input[name="import_rewrites_file"]').val()) {
+                        $('body').loadingPopup({
+                            timeout: false
+                        });
+
+                        $(this.form).submit();
+                    }
                 });
+            })(jQuery);
 
-                $(this.form).submit();
-            }
         });
-    })(jQuery);
-
-});
-</script>
+        </script>
     </div>
     <?php endif; ?>
 </div>

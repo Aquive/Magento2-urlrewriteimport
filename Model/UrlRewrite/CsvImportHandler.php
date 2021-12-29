@@ -10,6 +10,7 @@
 namespace Jworks\UrlRewriteImport\Model\UrlRewrite;
 
 use Magento\Framework\App\ResourceConnection;
+use Magento\Setup\Exception;
 
 /**
  * URL rewrite CSV Import Handler
@@ -53,6 +54,9 @@ class CsvImportHandler
      */
     protected $_urlModel;
 
+    protected $errors = [];
+    protected $success = [];
+
     /**
      * Redirect type
      */
@@ -83,8 +87,7 @@ class CsvImportHandler
                 $data['connection'] :
                 $resource->getConnection();
         $this->_urlModel = $urlRewriteFactory->create();
-        /** @var $urlResource \Magento\UrlRewrite\Model\ResourceModel\UrlRewrite */
-        $urlResource = $this->_urlModel->getResource();
+        $urlResource = $this->_urlModel->getResource(); /** @var $urlResource \Magento\UrlRewrite\Model\ResourceModel\UrlRewrite */
         $this->_entityTable = $urlResource->getMainTable();
         $this->_rewriteFields = ['request_path', 'target_path', 'redirect_type', 'store_id', 'entity_type'];
     }
@@ -117,13 +120,33 @@ class CsvImportHandler
         $urlRawData = $this->csvProcessor->getData($file['tmp_name']);
         $urlRawData = $this->_prepareData($urlRawData);
 
-
         foreach ($urlRawData as $rowIndex => $dataRow) {
+            // Offset of 2 for line. One for the header line. One to account for array starting at 0 instead of 1.
+            $lineNumber = $rowIndex + 2;
 
-            $this->_validateRewrite($dataRow);
-            $urlData = $this->parse($dataRow);
-            $this->_importUrl($urlData);
+            // Catch errors on validation and log it, continue on next CSV line
+            try {
+                $this->_validateRewrite($dataRow);
+            } catch(\Throwable $exception) {
+                $this->errors['Line: ' . $lineNumber] = $exception->getMessage();
+                continue;
+            }
+
+            // Catch errors on database insert and log it, continue on next CSV line
+            try {
+                $urlData = $this->parse($dataRow);
+                $this->_importUrl($urlData);
+                $this->success['Line: ' . $lineNumber] = 'Successfully imported';
+            } catch (\Throwable $exception) {
+                $this->errors['Line: ' . $lineNumber] = $exception->getMessage();
+                continue;
+            }
         }
+
+        return [
+            'errors' => $this->errors,
+            'success' => $this->success
+        ];
     }
 
     /**
@@ -149,9 +172,7 @@ class CsvImportHandler
     {
         if (count($rewrite) != count(array_filter($rewrite, 'strlen'))) {
             throw new \Magento\Framework\Exception\LocalizedException(
-                __(
-                    'Empty columns are not allowed.'
-                )
+                __('Empty columns are not allowed.')
             );
         }
     }
@@ -164,6 +185,39 @@ class CsvImportHandler
     {
         array_walk($rewrite, 'trim');
         $parsedRewrite = [];
+
+        //print_r($this->_publicStores);
+        //die();
+
+        if(!isset($rewrite['request_path'])) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('Request path not set.')
+            );
+        }
+
+        if(!isset($rewrite['target_path'])) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('Target path not set.')
+            );
+        }
+
+        if(!isset($rewrite['redirect'])) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('Redirect type not set. Valid entries are 0, 301 and 302')
+            );
+        }
+
+        // TODO: fix this
+        /*if(!in_array($rewrite['store_code'], $this->_publicStores)) {
+            $validStores = null;
+            foreach ($this->_publicStores as $storeName => $value) {
+                $validStores .=  '"' . $storeName . '", ';
+            }
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('Store code not found. Valid entries are: ' . substr($validStores, 0, -2))
+            );
+        }*/
+
         $parsedRewrite['request_path'] = $rewrite['request_path'];
         $parsedRewrite['target_path'] = $rewrite['target_path'];
         $parsedRewrite['redirect_type'] = $rewrite['redirect'];

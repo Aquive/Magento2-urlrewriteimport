@@ -149,7 +149,7 @@ class CsvImportHandler
      */
     public function parse(array $rewrite)
     {
-        array_walk($rewrite, 'trim');;
+        array_walk($rewrite, 'trim');
         $parsedRewrite = [];
         $parsedRewrite['request_path'] = $rewrite['request_path'];
         $parsedRewrite['target_path'] = $rewrite['target_path'];

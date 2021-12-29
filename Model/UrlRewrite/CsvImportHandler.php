@@ -48,11 +48,24 @@ class CsvImportHandler
      */
     protected $_rewriteFields;
 
+    /**
+     * @var \Magento\UrlRewrite\Model\UrlRewrite
+     */
+    protected $_urlModel;
+
+    /**
+     * Redirect type
+     */
     const ENTITY_TYPE_CUSTOM = 'custom';
 
     /**
+     * CsvImportHandler constructor.
      * @param \Magento\Store\Model\ResourceModel\Store\Collection $storeCollection
      * @param \Magento\Framework\File\Csv $csvProcessor
+     * @param ResourceConnection $resource
+     * @param \Magento\UrlRewrite\Model\UrlRewriteFactory $urlRewriteFactory
+     * @param array $data
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function __construct(
         \Magento\Store\Model\ResourceModel\Store\Collection $storeCollection,
